@@ -1,13 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Table, Column, DataType, Model } from "sequelize-typescript";
 
-interface StatusAttr {
+interface RoleAttr {
     name: string;
     description: string;
 }
 
-@Table({ tableName: "status", createdAt: false, updatedAt: false })
-export class Status extends Model<Status, StatusAttr> {
+@Table({ tableName: "role", createdAt: false, updatedAt: false })
+export class Role extends Model<Role, RoleAttr> {
 
     @Column({
         type: DataType.INTEGER,
@@ -16,7 +16,7 @@ export class Status extends Model<Status, StatusAttr> {
     })
     id: number;
 
-    @ApiProperty({ example: "start", description: "| Name of status" })
+    @ApiProperty({ example: "WORKER", description: "| Name of role" })
     @Column({
         type: DataType.STRING,
         allowNull: false,
@@ -24,7 +24,7 @@ export class Status extends Model<Status, StatusAttr> {
     })
     name: string;
 
-    @ApiProperty({ example: "Means the process has started", description: "| About the status" })
+    @ApiProperty({ example: "WORKER: Looking for work", description: "| About the role" })
     @Column({
         type: DataType.STRING,
         allowNull: false

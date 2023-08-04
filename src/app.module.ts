@@ -2,6 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { StatusModule } from './status/status.module';
+import { RoleModule } from './role/role.module';
+import { CategoryModule } from './category/category.module';
+import { Role } from './role/models/role.model';
+import { Status } from './status/models/status.model';
+import { Category } from './category/models/category.model';
 
 @Module({
     imports: [
@@ -18,9 +23,11 @@ import { StatusModule } from './status/status.module';
         database: process.env.PG_DB,
         logging: true,
         autoLoadModels: true,
-        models: [],
+        models: [Role, Status, Category],
       }),
       StatusModule,
+      RoleModule,
+      CategoryModule,
   ],
   controllers: [],
   providers: [],
