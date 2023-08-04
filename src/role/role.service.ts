@@ -43,9 +43,7 @@ export class RoleService {
   // FIND ONE ROLE BY ID
 
   async findOneRoleById(id: number): Promise<Role> {
-    const role = await this.roleRepo.findOne({ where: { id } });
-    console.log(role);
-    
+    const role = await this.roleRepo.findOne({ where: { id } });    
 
     if ( !role ) {
       throw new NotFoundException(`Role not found with this id: ${id}`);

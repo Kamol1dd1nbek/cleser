@@ -43,9 +43,7 @@ export class CategoryService {
   // FIND ONE CATEGORY BY ID
 
   async findOneCategoryById(id: number): Promise<Category> {
-    const role = await this.roleRepo.findOne({ where: { id }, include: { all: true } });
-    console.log(role);
-    
+    const role = await this.roleRepo.findOne({ where: { id }, include: { all: true } });    
 
     if ( !role ) {
       throw new NotFoundException(`Category not found with this id: ${id}`);
