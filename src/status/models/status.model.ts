@@ -6,7 +6,7 @@ interface StatusAttr {
     description: string;
 }
 
-@Table({ tableName: "status" })
+@Table({ tableName: "status", createdAt: false, updatedAt: false })
 export class Status extends Model<Status, StatusAttr> {
 
     @ApiProperty({ example: "start", description: "| Name of status" })
