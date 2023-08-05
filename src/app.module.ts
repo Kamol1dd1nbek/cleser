@@ -9,6 +9,8 @@ import { Status } from './status/models/status.model';
 import { Category } from './category/models/category.model';
 import { ServiceModule } from './service/service.module';
 import { Service } from './service/models/service.model';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
@@ -31,6 +33,8 @@ import { Service } from './service/models/service.model';
       RoleModule,
       CategoryModule,
       ServiceModule,
+      UserModule,
+      AuthModule,
   ],
   controllers: [],
   providers: [],
