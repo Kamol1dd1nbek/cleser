@@ -15,6 +15,7 @@ import { MailModule } from './mail/mail.module';
 import { WorkerServiceModule } from './worker_service/worker_service.module';
 import { User } from './user/models/user.model';
 import { WorkerService } from './worker_service/models/worker_service.model';
+import { UserRole } from './user/models/user_role.model';
 
 @Module({
     imports: [
@@ -31,7 +32,7 @@ import { WorkerService } from './worker_service/models/worker_service.model';
         database: process.env.PG_DB,
         logging: true,
         autoLoadModels: true,
-        models: [Role, Status, Category, Service, User, WorkerService],
+        models: [Role, Status, Category, Service, User, WorkerService, UserRole],
       }),
       MailModule,
       StatusModule,

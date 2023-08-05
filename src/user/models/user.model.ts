@@ -1,5 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Model, Table, Column, DataType } from "sequelize-typescript";
+import { Model, Table, Column, DataType, BelongsToMany } from "sequelize-typescript";
+import { Role } from "../../role/models/role.model";
+import { UserRole } from "./user_role.model";
 
 interface UserAttr {
     first_name: string;
@@ -76,4 +78,7 @@ export class User extends Model<User, UserAttr> {
         type: DataType.STRING
     })
     activation_link: string;
+
+    @BelongsToMany(()=> Role, () => UserRole)
+    roles: [Role]
 }
