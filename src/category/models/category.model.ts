@@ -4,6 +4,7 @@ import { Table, Column, DataType, Model, ForeignKey, BelongsTo, HasMany } from "
 interface CategoryAttr {
     name: string;
     description: string;
+    parent_id: number;
 }
 
 @Table({ tableName: "category", createdAt: false, updatedAt: false })

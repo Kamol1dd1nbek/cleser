@@ -14,9 +14,8 @@ export class CreateCategoryDto {
   
     @ApiProperty({
       example: '',
-      description: '| About the role',
+      description: '| About the category',
     })
-
     @IsOptional()
     @IsString()
     description: string;

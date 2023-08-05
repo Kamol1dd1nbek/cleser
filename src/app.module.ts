@@ -7,6 +7,8 @@ import { CategoryModule } from './category/category.module';
 import { Role } from './role/models/role.model';
 import { Status } from './status/models/status.model';
 import { Category } from './category/models/category.model';
+import { ServiceModule } from './service/service.module';
+import { Service } from './service/models/service.model';
 
 @Module({
     imports: [
@@ -23,11 +25,12 @@ import { Category } from './category/models/category.model';
         database: process.env.PG_DB,
         logging: true,
         autoLoadModels: true,
-        models: [Role, Status, Category],
+        models: [Role, Status, Category, Service],
       }),
       StatusModule,
       RoleModule,
       CategoryModule,
+      ServiceModule,
   ],
   controllers: [],
   providers: [],
