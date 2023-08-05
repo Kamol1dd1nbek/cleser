@@ -12,6 +12,9 @@ import { Service } from './service/models/service.model';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
+import { WorkerServiceModule } from './worker_service/worker_service.module';
+import { User } from './user/models/user.model';
+import { WorkerService } from './worker_service/models/worker_service.model';
 
 @Module({
     imports: [
@@ -28,7 +31,7 @@ import { MailModule } from './mail/mail.module';
         database: process.env.PG_DB,
         logging: true,
         autoLoadModels: true,
-        models: [Role, Status, Category, Service],
+        models: [Role, Status, Category, Service, User, WorkerService],
       }),
       MailModule,
       StatusModule,
@@ -37,6 +40,7 @@ import { MailModule } from './mail/mail.module';
       ServiceModule,
       UserModule,
       AuthModule,
+      WorkerServiceModule,
   ],
   controllers: [],
   providers: [],

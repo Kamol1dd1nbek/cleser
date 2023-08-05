@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/registration-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { User } from './models/user.model';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+  constructor(@InjectModel(User) private readonly userRepo: typeof User) {}
 
-  findAll() {
-    return `This action returns all user`;
+  @ApiOperation({ summary: "| Find all users" })
+  async findAllUsers() {
+    const users = await this.userRepo.findAll({ include: { all: true } });
   }
 
   findOne(id: number) {
