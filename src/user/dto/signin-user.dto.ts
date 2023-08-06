@@ -12,4 +12,9 @@ export class SigninUserDto {
     @IsString()
     @IsStrongPassword()
     password: string;
+
+    @ApiProperty({ example: 1, description: "| Role id" })
+    @IsNotEmpty()
+    @IsString()
+    role: string;
 }

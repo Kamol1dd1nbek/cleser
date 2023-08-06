@@ -36,9 +36,4 @@ export class RegistrationUserDto {
     @IsNotEmpty()
     @IsStrongPassword()
     confirm_password: string;
-
-    @ApiProperty({ example: 1, description: "| Role id" })
-    @IsNotEmpty()
-    @IsString()
-    role: string;
 }

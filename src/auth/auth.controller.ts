@@ -13,7 +13,7 @@ import { RegistrationUserDto } from '../user/dto/registration-user.dto';
 import { Response } from 'express';
 import { SigninUserDto } from '../user/dto/signin-user.dto';
 import { CookieGetter } from '../decorators/cookieGetter.decorator';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags("Authentication")
 @Controller('auth')
@@ -33,7 +33,7 @@ export class AuthController {
   @Post('signin')
   signin(
     @Body() signinUserDto: SigninUserDto,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: Response
   ) {
     return this.authService.signIn(signinUserDto, res);
   }
@@ -48,7 +48,8 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: "| Activation" })
-  @Get("pp/activate/:id")
+  @ApiResponse({status: 200})
+  @Get("activate/:id")
   activation(
     @Param("id") id: string
   ) {

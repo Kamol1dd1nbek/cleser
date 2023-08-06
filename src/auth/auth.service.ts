@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException, ForbiddenException, ExecutionContext } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from '../user/models/user.model';
 import { Response } from 'express';
@@ -43,24 +43,10 @@ export class AuthService {
       hashed_password,
     });
 
-    const role = await this.roleService.findOneRoleByName(
-      registrationUserDto.role.toUpperCase(),
-    );
-
-    if (!role) {
-      throw new BadRequestException('Role not found');
-    }
-
-    await newUser.$add('roles', [role.id]);
-    const  JwtUser = await this.userRepo.findOne({ where: { id: newUser.id }, include: [{all: true}, {model: Role, attributes: ["name"]}] })
-    const tokens = await this.getTokens(JwtUser);
-
-    const hashed_refresh_token = await bcrypt.hash(tokens.refresh_token, 10);
     const activation_link = uuid.v4();
 
     const updatedUser = await this.userRepo.update(
       {
-        hashed_refresh_token,
         activation_link,
       },
       {
@@ -68,11 +54,6 @@ export class AuthService {
         returning: true,
       },
     );
-
-    res.cookie('refresh_token', tokens.refresh_token, {
-      maxAge: 15 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-    });
 
     try {
       await this.mailService.sendUserConfirmation(updatedUser[1][0]);
@@ -83,19 +64,22 @@ export class AuthService {
 
     const response = {
       message: 'User registered',
-      user: updatedUser[1][0],
-      tokens,
+      user: updatedUser[1][0]
     }; 
     return response
-    throw new BadRequestException(response);
   }
 
   // SIGNIN
 
   async signIn(signinUserDto: SigninUserDto, res: Response) {
+    
     const { email, password } = signinUserDto;
 
     const user = await this.userRepo.findOne({ where: { email }, include: [{all: true}, {model: Role, attributes: ["name"]}] });
+
+    if ( user.hashed_refresh_token ) {
+      throw new BadRequestException("You are already logged in");
+    }
 
     if ( !user ) {
       throw new UnauthorizedException("Email or password is incorrect");
@@ -123,6 +107,16 @@ export class AuthService {
       returning: true
     });
 
+    const role = await this.roleService.findOneRoleByName(
+      signinUserDto.role.toUpperCase(),
+    );
+
+    if (!role) {
+      throw new BadRequestException('Role not found');
+    }
+
+    await user.$set('roles', [role.id]);
+
     res.cookie("refresh_token", tokens.refresh_token, {
       maxAge: 15 * 24 * 60 * 60 * 1000,
       httpOnly: true
@@ -132,8 +126,6 @@ export class AuthService {
       message: "User logged in successfully",
       tokens
     }
-    // throw new BadRequestException(response);
-    
   }
 
   //SIGNOUT
@@ -167,7 +159,6 @@ export class AuthService {
   //Tokens Generator
 
   async getTokens(user: User) {
-    console.log(user.roles);
     
     const jwtPayload = {
       id: user.id,
