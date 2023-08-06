@@ -33,16 +33,16 @@ export class AuthController {
   @Post('signin')
   signin(
     @Body() signinUserDto: SigninUserDto,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     return this.authService.signIn(signinUserDto, res);
   }
 
   @ApiOperation({ summary: "| SignOut" })
   @Post('signout')
-  signOut(
+  async signOut(
     @CookieGetter('refresh_token') refreshToken: string,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     return this.authService.signOut(refreshToken, res);
   }

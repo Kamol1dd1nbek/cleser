@@ -126,18 +126,18 @@ export class AuthService {
       httpOnly: true
     });
 
-    const response = {
+    return {
       message: "User logged in successfully",
       tokens
     }
-
-    return response;
+    // throw new BadRequestException(response);
+    
   }
 
   //SIGNOUT
 
-  async signOut(refreshToken: string, res: Response) {
-    const userData = await this.jwtService.verify(refreshToken, {
+  async signOut(refreshToken: string, res: Response): Promise<Object> {
+    const userData = this.jwtService.verify(refreshToken, {
       secret: process.env.REFRESH_TOKEN_KEY
     });    
 
@@ -145,7 +145,7 @@ export class AuthService {
       throw new ForbiddenException("User not found");
     }
 
-    const updatedUser = await this.userRepo.update({
+    const updatedUser =  this.userRepo.update({
       hashed_refresh_token: null
     },
     {
@@ -155,11 +155,11 @@ export class AuthService {
 
     res.clearCookie("refresh_token");
 
-    const response = {
+    return await {
       message: "User signout successfully",
       user: userData
     }
-    return response;
+    // throw new BadRequestException(response)
   }
 
   //Tokens Generator

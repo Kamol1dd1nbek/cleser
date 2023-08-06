@@ -16,6 +16,7 @@ import { WorkerServiceModule } from './worker_service/worker_service.module';
 import { User } from './user/models/user.model';
 import { WorkerService } from './worker_service/models/worker_service.model';
 import { UserRole } from './user/models/user_role.model';
+import { RatingModule } from './rating/rating.module';
 
 @Module({
     imports: [
@@ -42,6 +43,7 @@ import { UserRole } from './user/models/user_role.model';
       UserModule,
       AuthModule,
       WorkerServiceModule,
+      RatingModule,
   ],
   controllers: [],
   providers: [],
