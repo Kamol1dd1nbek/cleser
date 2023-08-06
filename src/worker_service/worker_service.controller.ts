@@ -2,33 +2,43 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { WorkerServiceService } from './worker_service.service';
 import { CreateWorkerServiceDto } from './dto/create-worker_service.dto';
 import { UpdateWorkerServiceDto } from './dto/update-worker_service.dto';
+import { CookieGetter } from '../decorators/cookieGetter.decorator';
+import { ApiOperation } from '@nestjs/swagger';
 
-@Controller('worker-service')
+@Controller('ws')
 export class WorkerServiceController {
   constructor(private readonly workerServiceService: WorkerServiceService) {}
 
-  // @Post()
-  // create(@Body() createWorkerServiceDto: CreateWorkerServiceDto) {
-  //   return this.workerServiceService.create(createWorkerServiceDto);
-  // }
+  @Post()
+  addService(@Body() createWorkerServiceDto: CreateWorkerServiceDto,
+  @CookieGetter("refresh_token") refreshToken: string) {
+    return this.workerServiceService.addService(refreshToken, createWorkerServiceDto);
+  }
 
-  // @Get()
-  // findAll() {
-  //   return this.workerServiceService.findAll();
-  // }
+  @Get()
+  finmyServicesdAll(
+    @CookieGetter("refresh_token") refreshToken: string
+  ) {
+    return this.workerServiceService.myServices(refreshToken);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.workerServiceService.findOne(+id);
   // }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateWorkerServiceDto: UpdateWorkerServiceDto) {
-  //   return this.workerServiceService.update(+id, updateWorkerServiceDto);
-  // }
+  @ApiOperation({ summary: "| Update service amount" })
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateWSDto: UpdateWorkerServiceDto,
+    @CookieGetter("refresh_token") refreshToken: string,
+    ) {
+    return this.workerServiceService.updateAmount(refreshToken, +id, updateWSDto);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.workerServiceService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string, @CookieGetter("refresh_token") refreshToken: string) {
+    return this.workerServiceService.removeWService(refreshToken, +id);
+  }
 }

@@ -48,7 +48,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: "| Activation" })
-  @Get("/activate/:id")
+  @Get("pp/activate/:id")
   activation(
     @Param("id") id: string
   ) {
