@@ -17,6 +17,7 @@ import { User } from './user/models/user.model';
 import { WorkerService } from './worker_service/models/worker_service.model';
 import { UserRole } from './user/models/user_role.model';
 import { RatingModule } from './rating/rating.module';
+import { Rating } from './rating/models/rating.model';
 
 @Module({
     imports: [
@@ -33,7 +34,7 @@ import { RatingModule } from './rating/rating.module';
         database: process.env.PG_DB,
         logging: true,
         autoLoadModels: true,
-        models: [Role, Status, Category, Service, User, WorkerService, UserRole],
+        models: [Role, Status, Category, Service, User, WorkerService, UserRole, Rating],
       }),
       MailModule,
       StatusModule,

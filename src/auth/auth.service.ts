@@ -9,6 +9,8 @@ import { JwtService } from '@nestjs/jwt';
 import { RoleService } from '../role/role.service';
 import { RegistrationUserDto } from '../user/dto/registration-user.dto';
 import { SigninUserDto } from '../user/dto/signin-user.dto';
+import { log } from 'console';
+import { Role } from '../role/models/role.model';
 
 @Injectable()
 export class AuthService {
@@ -50,8 +52,8 @@ export class AuthService {
     }
 
     await newUser.$add('roles', [role.id]);
-
-    const tokens = await this.getTokens(newUser);
+    const  JwtUser = await this.userRepo.findOne({ where: { id: newUser.id }, include: [{all: true}, {model: Role, attributes: ["name"]}] })
+    const tokens = await this.getTokens(JwtUser);
 
     const hashed_refresh_token = await bcrypt.hash(tokens.refresh_token, 10);
     const activation_link = uuid.v4();
@@ -93,7 +95,7 @@ export class AuthService {
   async signIn(signinUserDto: SigninUserDto, res: Response) {
     const { email, password } = signinUserDto;
 
-    const user = await this.userRepo.findOne({ where: { email } });
+    const user = await this.userRepo.findOne({ where: { email }, include: [{all: true}, {model: Role, attributes: ["name"]}] });
 
     if ( !user ) {
       throw new UnauthorizedException("Email or password is incorrect");
@@ -165,6 +167,8 @@ export class AuthService {
   //Tokens Generator
 
   async getTokens(user: User) {
+    console.log(user.roles);
+    
     const jwtPayload = {
       id: user.id,
       is_active: user.is_active,
