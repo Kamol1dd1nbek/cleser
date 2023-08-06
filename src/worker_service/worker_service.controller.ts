@@ -22,7 +22,7 @@ export class WorkerServiceController {
   }
 
   @ApiOperation({ summary: "| Get all services user's" })
-  @Roles("WORKER")
+  @Roles("WORKER", "ADMIN")
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get()
@@ -33,6 +33,8 @@ export class WorkerServiceController {
   }
 
   @ApiOperation({ summary: "| Update service amount" })
+  @Roles("WORKER", "ADMIN")
+  @UseGuards(RolesGuard)
   @UseGuards(SelfAuthGuard)
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
@@ -45,6 +47,8 @@ export class WorkerServiceController {
   }
 
   @ApiOperation({ summary: "| Remove service" })
+  @Roles("WORKER", "ADMIN")
+  @UseGuards(RolesGuard)
   @UseGuards(SelfAuthGuard)
   @UseGuards(JwtAuthGuard)
   @Delete(':id')

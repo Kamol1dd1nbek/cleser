@@ -18,6 +18,8 @@ import { WorkerService } from './worker_service/models/worker_service.model';
 import { UserRole } from './user/models/user_role.model';
 import { RatingModule } from './rating/rating.module';
 import { Rating } from './rating/models/rating.model';
+import { BookingModule } from './booking/booking.module';
+import { Booking } from './booking/models/booking.entity';
 
 @Module({
     imports: [
@@ -34,7 +36,7 @@ import { Rating } from './rating/models/rating.model';
         database: process.env.PG_DB,
         logging: true,
         autoLoadModels: true,
-        models: [Role, Status, Category, Service, User, WorkerService, UserRole, Rating],
+        models: [Role, Status, Category, Service, User, WorkerService, UserRole, Rating, Booking],
       }),
       MailModule,
       StatusModule,
@@ -45,6 +47,7 @@ import { Rating } from './rating/models/rating.model';
       AuthModule,
       WorkerServiceModule,
       RatingModule,
+      BookingModule,
   ],
   controllers: [],
   providers: [],

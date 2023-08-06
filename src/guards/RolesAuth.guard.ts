@@ -48,9 +48,7 @@ import { ROLES_KEY } from '../decorators/roles-auth.decorator';
         throw new UnauthorizedException({message: "User is not registered3"})
     }
       req.user = user;
-console.log(user)
       const permission = user.roles.some((role:any) => requiredRoles.includes(role.name));
-console.log("----> per ",permission)
       if (!permission) {
         throw new ForbiddenException({message: "Sizga ruxsat etilmagan"});
       }

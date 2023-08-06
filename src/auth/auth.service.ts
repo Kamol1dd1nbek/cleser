@@ -211,7 +211,8 @@ s
     if (user_id != decodedToken['id']) {
       throw new BadRequestException('User not found');
     }
-    const user = await this.userRepo.findOne({ where: { id: user_id } });
+    const user = await this.userRepo.findOne({ where: { id: user_id }, include: [{all: true}, {model: Role, attributes: ["name"]}] });
+
     if (!user || !user.hashed_refresh_token) {
       throw new BadRequestException('User not found');
     }

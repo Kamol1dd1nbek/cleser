@@ -5,6 +5,8 @@ import { UpdateStatusDto } from './dto/update-status.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Status } from './models/status.model';
 import { JwtAuthGuard } from '../guards/JwtAuth.guard';
+import { Roles } from '../decorators/roles-auth.decorator';
+import { RolesGuard } from '../guards/RolesAuth.guard';
 
 @ApiTags("Statuses")
 @Controller('status')
@@ -12,6 +14,8 @@ export class StatusController {
   constructor(private readonly statusService: StatusService) {}
 
   @ApiOperation({ summary: "| Add new status" })
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @ApiResponse({ status: 201, type: Status })
   @UseGuards(JwtAuthGuard)
   @Post()
