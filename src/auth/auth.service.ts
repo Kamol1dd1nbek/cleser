@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from '../user/models/user.model';
 import { Response } from 'express';
@@ -8,6 +8,7 @@ import { MailService } from '../mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
 import { RoleService } from '../role/role.service';
 import { RegistrationUserDto } from '../user/dto/registration-user.dto';
+import { SigninUserDto } from '../user/dto/signin-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -87,6 +88,80 @@ export class AuthService {
     throw new BadRequestException(response);
   }
 
+  // SIGNIN
+
+  async signIn(signinUserDto: SigninUserDto, res: Response) {
+    const { email, password } = signinUserDto;
+
+    const user = await this.userRepo.findOne({ where: { email } });
+
+    if ( !user ) {
+      throw new UnauthorizedException("Email or password is incorrect");
+    }
+
+    if ( !user.is_active ) {
+      throw new BadRequestException("User is not active");
+    }
+
+    const isMatchPassword = await bcrypt.compare(password, user.hashed_password);
+
+    if ( !isMatchPassword ) {
+      throw new UnauthorizedException("Email or password is incorrect");
+    }
+
+    const tokens = await this.getTokens(user);
+
+    const hashed_refresh_token = await bcrypt.hash(tokens.refresh_token, 10);
+
+    const updatedUser = await this.userRepo.update({
+      hashed_refresh_token
+    },
+    {
+      where: { id: user.id },
+      returning: true
+    });
+
+    res.cookie("refresh_token", tokens.refresh_token, {
+      maxAge: 15 * 24 * 60 * 60 * 1000,
+      httpOnly: true
+    });
+
+    const response = {
+      message: "User logged in successfully",
+      tokens
+    }
+
+    return response;
+  }
+
+  //SIGNOUT
+
+  async signOut(refreshToken: string, res: Response) {
+    const userData = await this.jwtService.verify(refreshToken, {
+      secret: process.env.REFRESH_TOKEN_KEY
+    });    
+
+    if ( !userData ) {
+      throw new ForbiddenException("User not found");
+    }
+
+    const updatedUser = await this.userRepo.update({
+      hashed_refresh_token: null
+    },
+    {
+      where: { id: userData.id },
+      returning: true
+    });
+
+    res.clearCookie("refresh_token");
+
+    const response = {
+      message: "User signout successfully",
+      user: userData
+    }
+    return response;
+  }
+
   //Tokens Generator
 
   async getTokens(user: User) {
@@ -108,6 +183,28 @@ export class AuthService {
     return {
       access_token,
       refresh_token,
+    };
+  }
+
+  //ACTIVATION
+
+  async activation(uuid: string) {
+    const user = await this.userRepo.findOne({
+      where: { activation_link: uuid, is_active: false },
+    });
+
+    const updatedUser = await this.userRepo.update(
+      { is_active: true },
+      { where: { activation_link: uuid, is_active: false }, returning: true },
+    );
+
+    if (!updatedUser[1][0]) {
+      throw new BadRequestException('The user is already activated');
+    }
+
+    return {
+      message: 'Successfully activated!',
+      user_id: updatedUser[1][0].dataValues.id,
     };
   }
 }

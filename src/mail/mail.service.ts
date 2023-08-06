@@ -7,7 +7,7 @@ export class MailService {
     constructor(private mailerServie: MailerService){}
 
     async sendUserConfirmation(user: User): Promise<void> {
-        const url = `${process.env.API_HOST}/api/users/activate/${user.activation_link}`;
+        const url = `${process.env.API_HOST}/api/auth/activate/${user.activation_link}`;
         await this.mailerServie.sendMail({
             to: user.email,
             subject: "Welcome to Stadium App! Confirm your Email!",
