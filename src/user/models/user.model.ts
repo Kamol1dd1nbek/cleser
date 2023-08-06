@@ -48,8 +48,7 @@ export class User extends Model<User, UserAttr> {
     @ApiProperty({ example: "+998991257894", description: "| User: phone" })
     @Column({
         type: DataType.STRING,
-        allowNull: false,
-        unique: true
+        allowNull: false
     })
     phone: string;
 
@@ -80,5 +79,5 @@ export class User extends Model<User, UserAttr> {
     activation_link: string;
 
     @BelongsToMany(()=> Role, () => UserRole)
-    roles: [Role]
+    roles: [Role];
 }

@@ -6,13 +6,16 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from '../user/models/user.model';
 import { MailModule } from '../mail/mail.module';
 import { JwtModule } from '@nestjs/jwt';
+import { RoleService } from '../role/role.service';
+import { RoleModule } from '../role/role.module';
 
 @Module({
   imports: [
     forwardRef(() => UserModule),
+    forwardRef(() => RoleModule),
     SequelizeModule.forFeature([User]),
     MailModule,
-    JwtModule.register({})
+    JwtModule.register({}),
   ],
   controllers: [AuthController],
   providers: [AuthService],
