@@ -15,7 +15,9 @@ import { RoleModule } from '../role/role.module';
     forwardRef(() => RoleModule),
     SequelizeModule.forFeature([User]),
     MailModule,
-    JwtModule.register({}),
+    JwtModule.register({
+      global: true,
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService],

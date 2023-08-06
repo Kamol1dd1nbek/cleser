@@ -1,12 +1,14 @@
+import { UserService } from './../user/user.service';
 import {
   Controller,
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   Res,
+  UseGuards,
+  HttpCode,
+  HttpStatus
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegistrationUserDto } from '../user/dto/registration-user.dto';
@@ -14,6 +16,8 @@ import { Response } from 'express';
 import { SigninUserDto } from '../user/dto/signin-user.dto';
 import { CookieGetter } from '../decorators/cookieGetter.decorator';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../guards/JwtAuth.guard';
+import { User } from '../user/models/user.model';
 
 @ApiTags("Authentication")
 @Controller('auth')
@@ -54,5 +58,18 @@ export class AuthController {
     @Param("id") id: string
   ) {
     return this.authService.activation(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: '| Refresh token' })
+  @ApiResponse({ status: 200, type: User })
+  @HttpCode(HttpStatus.OK)
+  @Post(':id/refresh')
+  refreshToken(
+    @Param('id') id: string,
+    @CookieGetter('refresh_token') refreshToken: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.refreshToken(+id, refreshToken, res);
   }
 }

@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { RoleController } from './role.controller';
 import { Role } from './models/role.model';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
