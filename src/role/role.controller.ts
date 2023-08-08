@@ -5,6 +5,8 @@ import { Role } from './models/role.model';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { JwtAuthGuard } from '../guards/JwtAuth.guard';
+import { Roles } from '../decorators/roles-auth.decorator';
+import { RolesGuard } from '../guards/RolesAuth.guard';
 
 @ApiTags("Roles")
 @Controller('role')
@@ -13,6 +15,8 @@ export class RoleController {
 
   @ApiOperation({ summary: "| Add new role" })
   @ApiResponse({ status: 201, type: Role })
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Post()
   addRole(@Body() createRoleDto: CreateRoleDto) {
@@ -20,6 +24,8 @@ export class RoleController {
   }
 
   @ApiOperation({ summary: "| Find all rolees" })
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get()
   findAllRolees() {
@@ -27,6 +33,8 @@ export class RoleController {
   }
 
   @ApiOperation({ summary: "| Find role with name" })
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get('name/:name')
   findOneRoleByName(@Param('name') name: string) {
@@ -34,6 +42,8 @@ export class RoleController {
   }
 
   @ApiOperation({ summary: "| Find role with id" })
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get('id/:idd')
   findOneRoleById(@Param('idd') idd: string) {
@@ -41,6 +51,8 @@ export class RoleController {
   }
 
   @ApiOperation({ summary: "| Update Role" })
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   updateRole(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
@@ -48,6 +60,8 @@ export class RoleController {
   }
 
   @ApiOperation({ summary: "| Delete role" })
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   removeRole(@Param('id') id: string) {

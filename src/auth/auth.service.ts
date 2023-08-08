@@ -77,9 +77,9 @@ export class AuthService {
 
     const user = await this.userRepo.findOne({ where: { email }, include: [{all: true}, {model: Role, attributes: ["name"]}] });
 
-    if ( user.hashed_refresh_token ) {
-      throw new BadRequestException("You are already logged in");
-    }
+    // if ( user.hashed_refresh_token ) {
+    //   throw new BadRequestException("You are already logged in");
+    // }
 
     if ( !user ) {
       throw new UnauthorizedException("Email or password is incorrect");
@@ -94,8 +94,18 @@ export class AuthService {
     if ( !isMatchPassword ) {
       throw new UnauthorizedException("Email or password is incorrect");
     }
+    const role = await this.roleService.findOneRoleByName(
+      signinUserDto.role.toUpperCase(),
+    );
 
-    const tokens = await this.getTokens(user);
+    if (!role) {
+      throw new BadRequestException('Role not found');
+    }
+
+    await user.$set('roles', [role.id]);
+    await user.save();
+    const finedUser = await this.userRepo.findOne({where: {id: user.id},  include: [{all: true}, {model: Role, attributes: ["name"]}] });
+    const tokens = await this.getTokens(finedUser);
 
     const hashed_refresh_token = await bcrypt.hash(tokens.refresh_token, 10);
 
@@ -106,16 +116,6 @@ export class AuthService {
       where: { id: user.id },
       returning: true
     });
-
-    const role = await this.roleService.findOneRoleByName(
-      signinUserDto.role.toUpperCase(),
-    );
-
-    if (!role) {
-      throw new BadRequestException('Role not found');
-    }
-
-    await user.$set('roles', [role.id]);
 
     res.cookie("refresh_token", tokens.refresh_token, {
       maxAge: 15 * 24 * 60 * 60 * 1000,
@@ -202,7 +202,7 @@ export class AuthService {
       user_id: updatedUser[1][0].dataValues.id,
     };
   }
-s
+
   //REFRESH TOKEN
 
   async refreshToken(user_id: number, refreshToken: string, res: Response) {

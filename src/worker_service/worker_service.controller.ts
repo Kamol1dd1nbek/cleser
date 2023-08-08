@@ -3,12 +3,13 @@ import { WorkerServiceService } from './worker_service.service';
 import { CreateWorkerServiceDto } from './dto/create-worker_service.dto';
 import { UpdateWorkerServiceDto } from './dto/update-worker_service.dto';
 import { CookieGetter } from '../decorators/cookieGetter.decorator';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/JwtAuth.guard';
 import { SelfAuthGuard } from '../guards/SelfAuth.guard';
 import { Roles } from '../decorators/roles-auth.decorator';
 import { RolesGuard } from '../guards/RolesAuth.guard';
 
+@ApiTags("Worker's service")
 @Controller('ws')
 export class WorkerServiceController {
   constructor(private readonly workerServiceService: WorkerServiceService) {}

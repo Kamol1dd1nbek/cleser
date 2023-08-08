@@ -27,7 +27,37 @@ export class BookingService {
     if (userData.roles[0].name !== "WORKER") {
       throw new BadRequestException("You are not worker")
     }
-    return this.bookingRepo.findAll({ where: {worker_id: userData.id} });
+    return this.bookingRepo.findAll({ where: {worker_id: userData.id}, include: {all:true} });
+  }
+
+  async confirm(refreshToken: string, booking_id: number) {
+    const userData = await this.jwtService.verify(refreshToken, {
+      secret: process.env.REFRESH_TOKEN_KEY,
+    });
+
+    if (!userData) {
+      throw new BadRequestException("Unauthorization")
+    }
+
+    if (userData.roles[0].name !== "WORKER") {
+      throw new BadRequestException("You are not worker")
+    }
+    return this.bookingRepo.update({status_id: 1}, { where: {worker_id: userData.id, id: booking_id} });
+  }
+
+  async reject(refreshToken: string, booking_id: number) {
+    const userData = await this.jwtService.verify(refreshToken, {
+      secret: process.env.REFRESH_TOKEN_KEY,
+    });
+
+    if (!userData) {
+      throw new BadRequestException("Unauthorization")
+    }
+
+    if (userData.roles[0].name !== "WORKER") {
+      throw new BadRequestException("You are not worker")
+    }
+    return this.bookingRepo.update({status_id: 3}, { where: {worker_id: userData.id, id: booking_id} });
   }
 
 }
